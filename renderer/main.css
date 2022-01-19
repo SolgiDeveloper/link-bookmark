@@ -73,7 +73,7 @@ main {
   align-items: center;
   align-content: center;
   flex-wrap: wrap;
-  /*display: none;*/
+  display: none;
 }
 
 #url {
@@ -104,8 +104,15 @@ main {
   border-bottom: lightgray 2px solid;
   background: #FAFAFA;
   padding: 10px;
+  border-left: 10px solid lightgray;
+  -webkit-user-select: none;
 }
-
+.read-item:hover{
+  background-color: #eee;
+}
+.read-item.selected {
+  border-left-color: dodgerblue;
+}
 .read-item img {
   width: 20%;
   margin-right: 25px;

@@ -3,14 +3,29 @@
 // All of the Node.js APIs are available in this process.
 // Modules
 const {ipcRenderer} = require('electron')
+const items = require('./items')
 
 // Dom Nodes
 let showModal = document.getElementById('show-modal'),
     closeModal = document.getElementById('close-modal'),
     modal = document.getElementById('modal'),
     addItem = document.getElementById('add-item'),
-    itemUrl = document.getElementById('url')
+    itemUrl = document.getElementById('url'),
+    search = document.getElementById('search')
 
+// filter items with search
+search.addEventListener('keyup', e =>{
+  // loop items
+  Array.from( document.getElementsByClassName('read-item')).forEach(item => {
+    // Hide items that don't match search value
+    let hasMatch = item.innerText.toLowerCase().includes(search.value)
+    item.style.display = hasMatch ? 'flex' : 'none'
+  })
+})
+// navigate item selection with up/down arrows
+document.addEventListener('keydown', e =>{
+  if(e.key === 'ArrowUp' || e.key === 'ArrowDown') items.changeSelection(e.key)
+})
 // Disable & Enable modal buttons
 const toggleModalButtons = () => {
 
@@ -55,7 +70,8 @@ addItem.addEventListener('click', e => {
 
 // Listen for new item from main process
 ipcRenderer.on('new-item-success', (e, newItem) => {
-  console.log(newItem)
+  // add new item to items node
+  items.addItem(newItem, true)
 
   // Enable buttons
   toggleModalButtons()
