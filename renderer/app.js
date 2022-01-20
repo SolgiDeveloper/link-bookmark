@@ -1,6 +1,4 @@
-// This file is required by the index.html file and will
-// be executed in the renderer process for that window.
-// All of the Node.js APIs are available in this process.
+
 // Modules
 const {ipcRenderer} = require('electron')
 const items = require('./items')
@@ -13,19 +11,51 @@ let showModal = document.getElementById('show-modal'),
     itemUrl = document.getElementById('url'),
     search = document.getElementById('search')
 
-// filter items with search
-search.addEventListener('keyup', e =>{
-  // loop items
-  Array.from( document.getElementsByClassName('read-item')).forEach(item => {
+// Open modal from menu
+ipcRenderer.on( 'menu-show-modal', () => {
+  showModal.click()
+})
+
+// Open selected item from menu
+ipcRenderer.on( 'menu-open-item', () => {
+  items.open()
+})
+
+// Delete selected item from menu
+ipcRenderer.on( 'menu-delete-item', () => {
+  let selectedItem = items.getSelectedItem()
+  items.delete(selectedItem.index)
+})
+
+// Open item in native browser from menu
+ipcRenderer.on( 'menu-open-item-native', () => {
+  items.openNative()
+})
+
+// Focus the search input from the menu
+ipcRenderer.on( 'menu-focus-search', () => {
+  search.focus()
+})
+
+// Filter items with "search"
+search.addEventListener('keyup', e => {
+
+  // Loop items
+  Array.from( document.getElementsByClassName('read-item') ).forEach( item => {
+
     // Hide items that don't match search value
     let hasMatch = item.innerText.toLowerCase().includes(search.value)
     item.style.display = hasMatch ? 'flex' : 'none'
   })
 })
-// navigate item selection with up/down arrows
-document.addEventListener('keydown', e =>{
-  if(e.key === 'ArrowUp' || e.key === 'ArrowDown') items.changeSelection(e.key)
+
+// Navigate item selection with up/down arrows
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+    items.changeSelection(e.key)
+  }
 })
+
 // Disable & Enable modal buttons
 const toggleModalButtons = () => {
 
@@ -70,7 +100,8 @@ addItem.addEventListener('click', e => {
 
 // Listen for new item from main process
 ipcRenderer.on('new-item-success', (e, newItem) => {
-  // add new item to items node
+
+  // Add new item to "items" node
   items.addItem(newItem, true)
 
   // Enable buttons

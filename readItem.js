@@ -1,3 +1,4 @@
+
 // Modules
 const {BrowserWindow} = require('electron')
 
@@ -29,7 +30,7 @@ module.exports = (url, callback) => {
     // Get screenshot (thumbnail)
     offscreenWindow.webContents.capturePage().then( image => {
 
-      // Get image as a dataURL ==> we dont need to save actual file
+      // Get image as a dataURL
       let screenshot = image.toDataURL()
 
       // Execute callback with new item object

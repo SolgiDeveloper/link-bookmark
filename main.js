@@ -2,6 +2,8 @@
 const {app, BrowserWindow, ipcMain} = require('electron')
 const windowStateKeeper = require('electron-window-state')
 const readItem = require('./readItem')
+const appMenu = require('./menu')
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
@@ -10,7 +12,7 @@ let mainWindow
 ipcMain.on('new-item', (e, itemUrl) => {
 
   // Get new item and send back to renderer
-  readItem(itemUrl, (item) => {
+  readItem( itemUrl, item => {
     e.sender.send('new-item-success', item)
   })
 })
@@ -20,18 +22,21 @@ function createWindow () {
 
   // Win state keeper
   let state = windowStateKeeper({
-    defaultWidth: 700, defaultHeight: 950
+    defaultWidth: 500, defaultHeight: 650
   })
 
   mainWindow = new BrowserWindow({
     x: state.x, y: state.y,
     width: state.width, height: state.height,
-    minWidth: 700, maxWidth: 950, minHeight: 300,
+    minWidth: 350, maxWidth: 650, minHeight: 300,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
     }
   })
+
+  // Create main app menu
+  appMenu(mainWindow.webContents)
 
   // Load index.html into the new BrowserWindow
   mainWindow.loadFile('renderer/main.html')
@@ -60,4 +65,3 @@ app.on('window-all-closed', () => {
 app.on('activate', () => {
   if (mainWindow === null) createWindow()
 })
-
